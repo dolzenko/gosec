@@ -312,7 +312,13 @@ func getResultRange(ifInstr *ssa.If, instr *ssa.Convert, visitedIfs map[*ssa.If]
 	cond := ifInstr.Cond
 	binOp, ok := cond.(*ssa.BinOp)
 	if !ok || !isRangeCheck(binOp, instr.X) {
-		return rangeResult{minValue: math.MinInt, maxValue: math.MaxUint}
+		thenBounds := walkBranchForConvert(ifInstr.Block().Succs[0], instr, visitedIfs)
+		elseBounds := walkBranchForConvert(ifInstr.Block().Succs[1], instr, visitedIfs)
+		return rangeResult{
+			minValue:     math.MinInt,
+			maxValue:     math.MaxUint,
+			convertFound: thenBounds.convertFound || elseBounds.convertFound,
+		}
 	}
 
 	result := rangeResult{

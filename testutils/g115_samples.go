@@ -117,7 +117,7 @@ func main() {
 	`}, 1, gosec.NewConfig()},
 	{[]string{
 		`
-package main
+        package main
 
 import (
 	"fmt"
@@ -861,5 +861,23 @@ func main() {
             fmt.Printf("%d\n", b)
         }
 	`,
+	}, 0, gosec.NewConfig()},
+	{[]string{
+		`
+package main
+
+func main() {
+    var x int32
+    switch {
+    case x > 0:
+        switch {
+        case true:
+            f(uint64(x))
+        }
+    }
+}
+
+func f(_ uint64) {}
+                `,
 	}, 0, gosec.NewConfig()},
 }
